@@ -1,29 +1,26 @@
-//
-// Created by Kai Evergarden on 24.09.2023.
-//
-
 #ifndef INC_3D_PARSER_H
 #define INC_3D_PARSER_H
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
+#include <stdint.h>
 
 #define FEEL_STATUS 0
 #define FEEL_DATA 1
 #define VERTEX 'v'
 #define FACET 'f'
+#define SIZE 3
+#define SPACE " "
 
 enum {
     OK, ERROR
 };
 
-typedef unsigned char byte;
 
 /**
  * @file backend_parser.h
- * @brief This file contains the declarations for the backend parser.
+ * @brief This file contains the declarations for the .obj parser.
  */
 
 /**
@@ -91,7 +88,7 @@ typedef struct {
  * @param file_name The file name.
  * @return `OK` if the check is successful, `ERROR` otherwise.
  */
-byte file_checker(const char *file_name);
+uint8_t file_checker(const char *file_name);
 
 /**
  * @brief Reads data from the specified file and performs the appropriate actions based on the type.
@@ -101,7 +98,7 @@ byte file_checker(const char *file_name);
  * @param data A pointer to the `data_t` structure where the data will be written.
  * @return `OK` if the reading is successful, `ERROR` otherwise.
  */
-byte file_reader(const char *file_name, byte type, data_t *data);
+uint8_t file_reader(const char *file_name, uint8_t type, data_t *data);
 
 /**
  * @brief Processes the status information from the string.
@@ -110,7 +107,7 @@ byte file_reader(const char *file_name, byte type, data_t *data);
  * @param data A pointer to the `data_t` structure where the data will be written.
  * @return `OK` if the processing is successful, `ERROR` otherwise.
  */
-byte feel_status(const char *str, data_t *data);
+uint8_t feel_status(const char *str, data_t *data);
 
 /**
  * @brief Processes the vertex information from the string.
@@ -119,7 +116,7 @@ byte feel_status(const char *str, data_t *data);
  * @param data A pointer to the `data_t` structure where the data will be written.
  * @return `OK` if the processing is successful, `ERROR` otherwise.
  */
-byte feel_vertex(char *str, data_t *data);
+uint8_t feel_vertex(char *str, data_t *data);
 
 /**
  * @brief Processes the facet information from the string.
@@ -128,7 +125,7 @@ byte feel_vertex(char *str, data_t *data);
  * @param data A pointer to the `data_t` structure where the data will be written.
  * @return `OK` if the processing is successful, `ERROR` otherwise.
  */
-byte feel_facet(char *str, data_t *data);
+uint8_t feel_facet(char *str, data_t *data);
 
 /**
  * @brief Performs triangulation of the specified array of facet indices.
@@ -138,9 +135,9 @@ byte feel_facet(char *str, data_t *data);
  * @param data A pointer to the `data_t` structure where the data will be written.
  * @return `OK` if the triangulation is successful, `ERROR` otherwise.
  */
-byte triangulation(const unsigned int *arr, unsigned long long int length, data_t *data);
+uint8_t triangulation(const unsigned int *arr, unsigned long long int length, data_t *data);
 
-byte parser(char *file_name);
+uint8_t parser(char *file_name);
 
 
 #endif //INC_3D_PARSER_H

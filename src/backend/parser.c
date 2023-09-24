@@ -1,5 +1,10 @@
 #include "parser.h"
 
+int main(void){
+    parser("../obj_files/test.obj");
+    return 0;
+}
+
 uint8_t parser(char *file_name) {
     data_t data;
     if (file_checker(file_name) == ERROR) {
@@ -99,18 +104,16 @@ uint8_t file_reader(const char *file_name, uint8_t type, data_t *data) {
             }
         }
     }
-
     free(str);
     fclose(file);
     return OK;
 }
 
 uint8_t feel_status(const char *str, data_t *data) {
-    if (!str) {
+    if (str == NULL) {
         fprintf(stderr, "Error: str is NULL\n");
         return ERROR;
     }
-
     const char ch = *str;
     if (ch == VERTEX) {
         data->status.vertexes++;
@@ -122,35 +125,29 @@ uint8_t feel_status(const char *str, data_t *data) {
 }
 
 uint8_t feel_vertex(char *str, data_t *data) {
-    if (!str) {
+    if (str == NULL) {
         fprintf(stderr, "Error: str is NULL\n");
         return ERROR;
     }
-
     str++;
     static unsigned long long int vertex_counter = 0;
     if (vertex_counter >= data->vertex_array.vertex_length) {
         fprintf(stderr, "Error: Vertex counter is out of bounds\n");
         return ERROR;
     }
-
     vertex_t *vertex = &(data->vertex_array.vertex[vertex_counter]);
-    const uint8_t NUM_VERTEXES = SIZE;
-    double values[NUM_VERTEXES];
-
-    for (int i = 0; i < NUM_VERTEXES; i++) {
+    double values[SIZE];
+    for (int i = 0; i < SIZE; i++) {
         values[i] = strtod(str, &str);
         if (*str == '\0') {
             fprintf(stderr, "Error: Failed to parse vertex coordinates from string '%s'\n", str);
             return ERROR;
         }
     }
-
     vertex->x = values[0];
     vertex->y = values[1];
     vertex->z = values[2];
     vertex_counter++;
-
     return OK;
 }
 
@@ -161,8 +158,7 @@ uint8_t feel_facet(char *str, data_t *data) {
         return ERROR;
     }
     str++;
-    unsigned long long int size = SIZE;
-    unsigned long long int count = 0;
+    unsigned long long int size = SIZE, count = 0;
     unsigned int *facet_array = calloc(size, sizeof(unsigned int));
     if (!facet_array) {
         fprintf(stderr, "Error: Failed to allocate memory for facet array\n");
@@ -172,20 +168,15 @@ uint8_t feel_facet(char *str, data_t *data) {
     while (token) {
         if (count >= size) {
             size *= 2;
-            unsigned int *new_array = realloc(facet_array, size * sizeof(unsigned int));
-            if (!new_array) {
+            facet_array = realloc(facet_array, size * sizeof(unsigned int));
+            if (facet_array == NULL) {
                 fprintf(stderr, "Error: Failed to reallocate memory for facet array\n");
                 free(facet_array);
                 return ERROR;
             }
-            facet_array = new_array;
         }
-        if (token == NULL || *token == '\0' || (unsigned int) strtod(token, &token) < 0) {
-            fprintf(stderr, "Error: Invalid value in string\n");
-            free(facet_array);
-            return ERROR;
-        }
-        facet_array[count] = (unsigned int) strtod(token, &token);
+        unsigned int value = (unsigned int) strtod(token, &token);
+        facet_array[count] = value;
         token = strtok(NULL, SPACE);
         count++;
         if (count >= ULLONG_MAX / 2) {
@@ -207,13 +198,12 @@ uint8_t triangulation(const unsigned int *arr, unsigned long long int length, da
         fprintf(stderr, "Error: arr or data is NULL\n");
         return ERROR;
     }
-    unsigned long long int new_length = data->index_array.facet_length + length * 2;
-    unsigned int *new_facet_array = realloc(data->index_array.facet, new_length * sizeof(unsigned int));
-    if (!new_facet_array) {
+    unsigned long long int new_length = data->index_array.facet_length * 100 * length;
+    data->index_array.facet = realloc(data->index_array.facet, new_length * sizeof(unsigned int));
+    if (!data->index_array.facet) {
         fprintf(stderr, "Error: Failed to reallocate memory for facet array\n");
         return ERROR;
     }
-    data->index_array.facet = new_facet_array;
     for (unsigned long long int i = 1; i < length - 1; i++) {
         data->index_array.facet[data->index_array.facet_length++] = *arr;
         data->index_array.facet[data->index_array.facet_length++] = arr[i];
@@ -221,3 +211,4 @@ uint8_t triangulation(const unsigned int *arr, unsigned long long int length, da
     }
     return OK;
 }
+

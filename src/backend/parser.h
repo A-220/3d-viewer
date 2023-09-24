@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <limits.h>
 
 #define FEEL_STATUS 0
 #define FEEL_DATA 1
@@ -16,7 +17,6 @@
 enum {
     OK, ERROR
 };
-
 
 /**
  * @file backend_parser.h

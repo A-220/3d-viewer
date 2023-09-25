@@ -1,51 +1,39 @@
 #include "parser.h"
 
-int main(void){
-    parser("../obj_files/test.obj");
-    return 0;
-}
-
 uint8_t parser(char *file_name) {
     data_t data;
     if (file_checker(file_name) == ERROR) {
         fprintf(stderr, "Failed to check file '%s'\n", file_name);
         return ERROR;
     }
-
     if (file_reader(file_name, FEEL_STATUS, &data) == ERROR) {
         fprintf(stderr, "Failed to read status from file '%s'\n", file_name);
         return ERROR;
     }
-
     data.status.edges = data.status.vertexes + data.status.facets - 2;
     data.vertex_array.vertex_length = data.status.vertexes;
     data.vertex_array.vertex = calloc(data.vertex_array.vertex_length, sizeof(vertex_t));
     data.index_array.facet_length = 0;
-
     if (!data.vertex_array.vertex) {
         fprintf(stderr, "Failed to allocate memory for vertex array\n");
         return ERROR;
     }
-
     if (file_reader(file_name, FEEL_DATA, &data) == ERROR) {
         fprintf(stderr, "Failed to read data from file '%s'\n", file_name);
         free(data.vertex_array.vertex);
         return ERROR;
     }
-
     puts("VERTEX");
     for(unsigned long long i = 0; i < data.vertex_array.vertex_length; i++) {
         printf("%f %f %f ", data.vertex_array.vertex[i].x, data.vertex_array.vertex[i].y, data.vertex_array.vertex[i].z);
         putchar('\n');
     }
-
     puts("FACET");
     for (unsigned long long i = 0; i < data.index_array.facet_length; i++) {
         printf("%u ", data.index_array.facet[i]);
         if ((i + 1) % 3 == 0)
             putchar('\n');
     }
-
     return OK;
 }
 
@@ -54,27 +42,22 @@ uint8_t file_checker(const char *file_name) {
         fprintf(stderr, "Error: File name is NULL\n");
         return ERROR;
     }
-
     if (!strstr(file_name, ".obj")) {
         fprintf(stderr, "Error: File '%s' is not in .obj format\n", file_name);
         return ERROR;
     }
-
     return OK;
 }
-
 uint8_t file_reader(const char *file_name, uint8_t type, data_t *data) {
     if (!file_name || !data) {
         fprintf(stderr, "Error: file_name or data is NULL\n");
         return ERROR;
     }
-
     FILE *file = fopen(file_name, "r");
     if (!file) {
         fprintf(stderr, "Error: Failed to open file '%s'\n", file_name);
         return ERROR;
     }
-
     char *str = NULL;
     size_t len = 0;
     while ((getline(&str, &len, file)) != -1) {
@@ -120,7 +103,6 @@ uint8_t feel_status(const char *str, data_t *data) {
     } else if (ch == FACET) {
         data->status.facets++;
     }
-
     return OK;
 }
 

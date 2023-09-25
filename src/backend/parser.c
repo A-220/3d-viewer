@@ -130,7 +130,7 @@ uint8_t feel_vertex(char *str, data_t *data) {
         return ERROR;
     }
     str++;
-    static unsigned long long int vertex_counter = 0;
+    static size_t vertex_counter = 0;
     if (vertex_counter >= data->vertex_array.vertex_length) {
         fprintf(stderr, "Error: Vertex counter is out of bounds\n");
         return ERROR;
@@ -158,7 +158,7 @@ uint8_t feel_facet(char *str, data_t *data) {
         return ERROR;
     }
     str++;
-    unsigned long long int size = SIZE, count = 0;
+    size_t int size = SIZE, count = 0;
     unsigned int *facet_array = calloc(size, sizeof(unsigned int));
     if (!facet_array) {
         fprintf(stderr, "Error: Failed to allocate memory for facet array\n");
@@ -198,7 +198,7 @@ uint8_t triangulation(const unsigned int *arr, unsigned long long int length, da
         fprintf(stderr, "Error: arr or data is NULL\n");
         return ERROR;
     }
-    unsigned long long int new_length = data->index_array.facet_length * 100 * length;
+    size_t new_length = data->index_array.facet_length * 100 * length;
     data->index_array.facet = realloc(data->index_array.facet, new_length * sizeof(unsigned int));
     if (!data->index_array.facet) {
         fprintf(stderr, "Error: Failed to reallocate memory for facet array\n");

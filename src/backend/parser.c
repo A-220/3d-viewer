@@ -1,7 +1,15 @@
 #include "parser.h"
+int main(void) {
+    parser("../obj_files/test.obj");
+}
 
 uint8_t parser(char *file_name) {
     data_t data;
+    data.index_array.facet_length = 0;
+    data.vertex_array.vertex_length = 0;
+    data.status.vertexes = 0;
+    data.status.facets = 0;
+    data.index_array.facet = calloc(SIZE, sizeof(unsigned int));
     if (file_checker(file_name) == ERROR) {
         fprintf(stderr, "Failed to check file '%s'\n", file_name);
         return ERROR;
@@ -140,7 +148,7 @@ uint8_t feel_facet(char *str, data_t *data) {
         return ERROR;
     }
     str++;
-    size_t int size = SIZE, count = 0;
+    size_t size = SIZE, count = 0;
     unsigned int *facet_array = calloc(size, sizeof(unsigned int));
     if (!facet_array) {
         fprintf(stderr, "Error: Failed to allocate memory for facet array\n");
